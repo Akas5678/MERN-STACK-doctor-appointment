@@ -38,10 +38,13 @@ const AddDoctor = () => {
         "address",
         JSON.stringify({ line1: address1, line2: address2 })
       );
-
+      formData.append("date", Date.now());
       formData.forEach((value, key) => {
         console.log(`${key} , ${value}`);
       });
+      for (let pair of formData.entries()) {
+        console.log(`${pair[0]}:`, pair[1]);
+      }
 
       const { data } = await axios.post(
         backendUrl + "/api/admin/add-doctors",
@@ -185,12 +188,12 @@ const AddDoctor = () => {
                 value={speciality}
                 className="w-full px-4 py-2 border border-gray-300 rounded-xl shadow-inner focus:ring-2 focus:ring-purple-400 outline-none"
               >
-                <option value="General physician ">General physician</option>
+                <option value="General physician">General physician</option>
                 <option value="Gynecologist">Gynecologist</option>
                 <option value="Dermatologist">Dermatologist</option>
-                <option value="Pediatricians ">Pediatricians</option>
-                <option value="Neurologist ">Neurologist</option>
-                <option value="Gastroenterlogist ">Gastroentrologist</option>
+                <option value="Pediatricians">Pediatricians</option>
+                <option value="Neurologist">Neurologist</option>
+                <option value="Gastroenterlogist">Gastroentrologist</option>
               </select>
             </div>
 

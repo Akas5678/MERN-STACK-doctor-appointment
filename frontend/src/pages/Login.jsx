@@ -3,11 +3,18 @@ import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+
+// Optional: Define constants for modes to prevent typos
+const MODE = {
+  LOGIN: "Login",
+  SIGNUP: "Sign Up",
+};
+
 const Login = () => {
   const { backendUrl, token, setToken } = useContext(AppContext);
-
   const navigate = useNavigate();
-  const [state, setState] = useState("Sign Up");
+
+  const [mode, setMode] = useState(MODE.SIGNUP);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -16,8 +23,8 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      if (state === "sign Up") {
-        const { data } = await axios.post(backendUrl + "/api/user/register", {
+      if (mode === MODE.SIGNUP) {
+        const { data } = await axios.post(`${backendUrl}/api/user/register`, {
           email,
           password,
           name,
@@ -30,7 +37,7 @@ const Login = () => {
           toast.error(data.message);
         }
       } else {
-        const { data } = await axios.post(backendUrl + "/api/user/login", {
+        const { data } = await axios.post(`${backendUrl}/api/user/login`, {
           email,
           password,
         });
@@ -43,7 +50,7 @@ const Login = () => {
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error("Something went wrong");
     }
   };
@@ -53,80 +60,81 @@ const Login = () => {
       navigate("/");
     }
   }, [token]);
+
   return (
-    <form
-      className="min-h-[80vh] flex flex-items-center"
-      onSubmit={handleSubmit}
-    >
+    <form className="min-h-[80vh] flex items-center" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-3 p-8 m-auto min-w-[340px] sm:min-w-96 border rounded-xl text-zinc-600 text-sm shadow-lg">
         <p className="text-2xl font-semibold">
-          {state === "Sign Up" ? "Create Account" : "Login"}
+          {mode === MODE.SIGNUP ? "Create Account" : "Login"}
         </p>
         <p>
-          {" "}
-          Please {state === "sign up" ? "sign up" : "log in"} to book
+          Please {mode === MODE.SIGNUP ? "sign up" : "log in"} to book
           appointment
         </p>
-        {state === "Sign Up" && (
+
+        {mode === MODE.SIGNUP && (
           <div className="w-full">
-            <p> Full Name</p>
+            <p>Full Name</p>
             <input
               className="border border-zinc-300 rounded w-full p-2 mt-1"
               type="text"
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
             />
           </div>
         )}
+
         <div className="w-full">
-          <p> Email</p>
+          <p>Email</p>
           <input
             className="border border-zinc-300 rounded w-full p-2 mt-1"
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
+
         <div className="w-full">
-          <p> Password</p>
+          <p>Password</p>
           <input
             className="border border-zinc-300 rounded w-full p-2 mt-1"
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
+
         <button
           className="bg-primary text-white w-full py-2 rounded-md text-base"
           type="submit"
         >
-          {state === "Sign Up" ? "Create Account" : "Login"}
+          {mode === MODE.SIGNUP ? "Create Account" : "Login"}
         </button>
-        {state === "Sign Up" ? (
+
+        {mode === MODE.SIGNUP ? (
           <p className="text-center mt-4 text-gray-600">
-            {" "}
-            Already have an Account ?{" "}
+            Already have an account?
             <span
               className="text-primary cursor-pointer ml-1 font-medium hover:underline transition"
-              onClick={() => setState("Login")}
+              onClick={() => setMode(MODE.LOGIN)}
             >
-              {" "}
-              Login Here{" "}
+              Login Here
             </span>
           </p>
         ) : (
           <p className="text-center mt-4 text-gray-600">
-            {" "}
-            Don't have an Account ?{" "}
+            Don't have an account?
             <span
               className="text-primary cursor-pointer ml-1 font-medium hover:underline transition"
-              onClick={() => setState("Sign Up")}
+              onClick={() => setMode(MODE.SIGNUP)}
             >
-              {" "}
-              Sign Up Here{" "}
+              Sign Up Here
             </span>
           </p>
         )}
